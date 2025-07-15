@@ -146,13 +146,34 @@
   <h5>إتمام الطلب</h5>
   <input id="name" type="text" class="form-control mb-2" placeholder="الاسم">
   <input id="phone" type="text" class="form-control mb-2" placeholder="رقم الهاتف">
+  <select id="delivery-area" class="form-select mb-2" onchange="updateDeliveryFee()">
+  <option value="" disabled selected>اختر منطقة التوصيل</option>
+  <option value="area1">المنطقة 1</option>
+  <option value="area2">المنطقة 2</option>
+  <option value="area3">المنطقة 3</option>
+</select>
+<div id="delivery-fee-message" class="mb-2" style="font-weight: bold;"></div>
+
   <input id="address" type="text" class="form-control mb-2" placeholder="العنوان">
+
   <!-- <button class="btn btn-sm btn-outline-secondary mb-2" onclick="getUserLocation()">استخدم موقعي الحالي</button> -->
   <!-- <div id="location-error">⚠️ لم نتمكن من الحصول على موقعك. تأكد من السماح للموقع في إعدادات المتصفح.</div> -->
   <select id="payment" class="form-select mb-3">
     <option value="cash">نقداً</option>
     <option value="CliQ">CliQ</option>
   </select>
+
+  <!-- coupon-->
+  <input id="coupon-code" type="text" class="form-control mb-2" placeholder="كود الخصم (إن وجد)">
+<button class="btn btn-sm btn-outline-secondary mb-3 w-100" onclick="applyCoupon()">تفعيل الكوبون</button>
+<div id="coupon-message" class="text-success mb-2" style="display:none;"></div>
+
+<div id="order-summary" class="border p-2 mb-3" style="background:#f9f9f9;">
+  <h6 class="fw-bold mb-2">ملخص الطلب:</h6>
+  <ul id="summary-items" class="list-unstyled mb-1" style="max-height: 150px; overflow-y:auto;"></ul>
+  <div class="fw-bold">المجموع: <span id="summary-total">0 د.أ</span></div>
+</div>
+
   <button class="btn btn-success w-100" onclick="submitOrder()">تأكيد الطلب</button>
   <button class="btn btn-secondary mt-2 w-100" onclick="closePopup('checkout-popup')">إلغاء</button>
 </div>
@@ -276,6 +297,17 @@
       totalPrice += item.price * item.quantity;
     });
     document.getElementById('cart-total').textContent = totalPrice + ' د.أ';
+
+    if (discountPercent > 0) {
+  const discount = totalPrice * (discountPercent / 100);
+  const finalTotal = totalPrice - discount;
+
+  document.getElementById('cart-total').innerHTML = `
+    <div><s>${totalPrice.toFixed(2)} د.أ</s></div>
+    <div class="text-success">${finalTotal.toFixed(2)} د.أ بعد الخصم</div>`;
+} else {
+  document.getElementById('cart-total').textContent = totalPrice.toFixed(2) + ' د.أ';
+}
   }
 
   function removeFromCart(index) {
@@ -355,28 +387,140 @@
   function showCheckoutPopup() {
     closePopup('cart-popup');
     document.getElementById('checkout-popup').style.display = 'block';
+    updateOrderSummary(); // ✅ تحديث الملخص
   }
+
+  function updateOrderSummary() {
+  const list = document.getElementById('summary-items');
+  const totalEl = document.getElementById('summary-total');
+  list.innerHTML = '';
+
+  let totalBefore = 0;
+  cart.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = `(${item.id}) ${item.name}${item.color ? ' - ' + item.color : ''} × ${item.quantity}`;
+    list.appendChild(li);
+    totalBefore += item.price * item.quantity;
+  });
+
+  const discountAmount = discountPercent > 0 ? totalBefore * (discountPercent / 100) : 0;
+  const totalAfterDiscount = totalBefore - discountAmount;
+  const totalFinal = totalAfterDiscount + deliveryFee;
+
+  totalEl.innerHTML = `
+    ${discountPercent > 0 ? `<div>المجموع قبل الخصم: <s>${totalBefore.toFixed(2)} د.أ</s></div>
+    <div>قيمة الخصم (${discountPercent}%): -${discountAmount.toFixed(2)} د.أ</div>` : ''}
+    <div>رسوم التوصيل: ${deliveryFee.toFixed(2)} د.أ</div>
+    <div class="text-success fw-bold">المجموع النهائي: ${totalFinal.toFixed(2)} د.أ</div>
+  `;
+}
+
+const deliveryFees = {
+  area1: 5,  // رسوم التوصيل 5 د.أ للمنطقة 1
+  area2: 10, // رسوم التوصيل 10 د.أ للمنطقة 2
+  area3: 15  // رسوم التوصيل 15 د.أ للمنطقة 3
+};
+let deliveryFee = 0;
+
+function updateDeliveryFee() {
+  const areaSelect = document.getElementById('delivery-area');
+  const selectedArea = areaSelect.value;
+  const feeMessage = document.getElementById('delivery-fee-message');
+
+  if (deliveryFees[selectedArea] !== undefined) {
+    deliveryFee = deliveryFees[selectedArea];
+    feeMessage.textContent = `رسوم التوصيل: ${deliveryFee.toFixed(2)} د.أ`;
+  } else {
+    deliveryFee = 0;
+    feeMessage.textContent = '';
+  }
+  updateOrderSummary();
+  updateCart();  // لتحديث المجموع في السلة إذا تعرض هناك
+}
+
+
+  const coupons = {
+  "SAVE10": 10, // خصم 10%
+  "OFF20": 20, // خصم 20%
+  "VIP30": 30  // خصم 30%
+};
+
+let appliedCoupon = null;
+let discountPercent = 0;
+
+function applyCoupon() {
+  const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+  const message = document.getElementById('coupon-message');
+
+  if (coupons[code]) {
+    appliedCoupon = code;
+    discountPercent = coupons[code];
+    message.textContent = `تم تطبيق كوبون الخصم (${discountPercent}%) بنجاح ✅`;
+    message.style.color = 'green';
+    message.style.display = 'block';
+    document.getElementById('coupon-code').disabled = true;
+
+    updateCart();
+    updateOrderSummary();
+  } else {
+    appliedCoupon = null;
+    discountPercent = 0;
+    message.textContent = '❌ الكود غير صالح';
+    message.style.color = 'red';
+    message.style.display = 'block';
+    updateCart();
+  }
+}
+
+
 
   function submitOrder() {
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    const payment = document.getElementById('payment').value;
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+  const address = document.getElementById('address').value;
+  const payment = document.getElementById('payment').value;
+  const areaSelect = document.getElementById('delivery-area');
+  const selectedArea = areaSelect.options[areaSelect.selectedIndex]?.text || '';
 
-    if (name && phone && address && payment) {
-      const orderItems = cart.map(i => `- (${i.id}) ${i.name}${i.color ? ' - ' + i.color : ''} × ${i.quantity}`).join('\n');
-      const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0) + ' د.أ';
+  if (name && phone && address && payment && selectedArea) {
+    const orderItems = cart.map(i => `- (${i.id}) ${i.name}${i.color ? ' - ' + i.color : ''} × ${i.quantity}`).join('\n');
+    const totalBefore = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const discountAmount = discountPercent > 0 ? totalBefore * discountPercent / 100 : 0;
+    const totalAfter = totalBefore - discountAmount + deliveryFee;
 
-      const message = `مرحبا، اسمي ${name}. أرغب بطلب:\n\n${orderItems}\n\nالمجموع: ${total}\nالهاتف: ${phone}\nالعنوان: ${address}\nالدفع: ${payment}`;
-      const whatsappURL = `https://wa.me/962781313782?text=${encodeURIComponent(message)}`;
-      window.open(whatsappURL, '_blank');
+    const message = `مرحبا، اسمي ${name}. أرغب بطلب:
 
-      cart.length = 0;
-      updateCart();
-      saveCart(); // ✅ حذف السلة من التخزين بعد الطلب
-      closePopup('checkout-popup');
-    }
+${orderItems}
+
+${appliedCoupon ? `كود الخصم: ${appliedCoupon} (${discountPercent}%)\n` : ''}
+رسوم التوصيل: ${deliveryFee.toFixed(2)} د.أ
+المنطقة: ${selectedArea}
+المجموع النهائي: ${totalAfter.toFixed(2)} د.أ
+الهاتف: ${phone}
+العنوان: ${address}
+الدفع: ${payment}`;
+
+    const whatsappURL = `https://wa.me/962781313782?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank');
+
+    cart.length = 0;
+    appliedCoupon = null;
+    discountPercent = 0;
+    deliveryFee = 0;
+
+    document.getElementById('coupon-code').value = '';
+    document.getElementById('coupon-code').disabled = false;
+    document.getElementById('coupon-message').style.display = 'none';
+    document.getElementById('delivery-area').selectedIndex = 0;
+    document.getElementById('delivery-fee-message').textContent = '';
+
+    updateCart();
+    saveCart();
+    closePopup('checkout-popup');
+  } else {
+    alert('يرجى تعبئة جميع الحقول واختيار المنطقة.');
   }
+}
 
   displayProducts();
   updateCart(); // ✅ تأكد من تحميل السلة بعد فتح الصفحة
