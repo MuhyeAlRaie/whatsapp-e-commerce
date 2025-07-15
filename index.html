@@ -283,47 +283,7 @@
     closePopup('cart-popup');
     document.getElementById('checkout-popup').style.display = 'block';
   }
-  // let map, marker;
-  // function initMap() {
-  //   const defaultLocation = { lat: 31.963158, lng: 35.930359 };
-  //   map = new google.maps.Map(document.getElementById("map"), {
-  //     center: defaultLocation,
-  //     zoom: 13,
-  //   });
-  //   map.addListener("click", function (e) {
-  //     placeMarker(e.latLng);
-  //   });
-  // }
-  // function placeMarker(location) {
-  //   if (marker) {
-  //     marker.setPosition(location);
-  //   } else {
-  //     marker = new google.maps.Marker({ position: location, map: map });
-  //   }
-  //   const lat = location.lat();
-  //   const lng = location.lng();
-  //   const mapLink = `https://maps.google.com/?q=${lat},${lng}`;
-  //   document.getElementById('address').value = mapLink;
-  // }
-  // function getUserLocation() {
-  //   if (!navigator.geolocation) {
-  //     alert("متصفحك لا يدعم خاصية تحديد الموقع.");
-  //     return;
-  //   }
-  //   navigator.geolocation.getCurrentPosition(
-  //     function (position) {
-  //       document.getElementById('location-error').style.display = 'none';
-  //       const lat = position.coords.latitude;
-  //       const lng = position.coords.longitude;
-  //       const location = new google.maps.LatLng(lat, lng);
-  //       map.setCenter(location);
-  //       placeMarker(location);
-  //     },
-  //     function () {
-  //       document.getElementById('location-error').style.display = 'block';
-  //     }
-  //   );
-  // }
+
   function submitOrder() {
     const name = document.getElementById('name').value;
     const phone = document.getElementById('phone').value;
@@ -332,7 +292,8 @@
 
     
     if (name && phone && address && payment) {
-      const orderItems = cart.map(i => `- ${i.name} × ${i.quantity} `).join('\n');
+      const orderItems = cart.map(i => `- (${i.id}) ${i.name} × ${i.quantity}`).join('\n');
+
       const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0) + ' د.أ';
 const message = `مرحبا، اسمي ${name}. أرغب بطلب:
 
