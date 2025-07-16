@@ -520,11 +520,21 @@ const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURICom
     saveCart();
     closePopup('checkout-popup');
 
-   fetch(CONFIG.ORDERS_API_URL, {
+ fetch(CONFIG.ORDERS_API_URL, {
   method: "POST",
   body: JSON.stringify({
-    name, phone, area: selectedArea, address, payment, items: orderItems, appliedCoupon , discountPercent,delivery: deliveryFee.toFixed(2), total: totalAfter.toFixed(2)
-  })
+    name,
+    phone,
+    area: selectedArea,
+    address,
+    payment,
+    items: orderItems,
+    deliveryFee: deliveryFee.toFixed(2),
+    coupon: appliedCoupon || '',
+    discountAmount: discountAmount.toFixed(2),
+     total: totalAfter.toFixed(2)
+  }),
+ 
 });
 
   } else {
