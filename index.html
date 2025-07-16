@@ -136,7 +136,7 @@
 <select class="form-select mb-3" id="color-select"></select>
 <p id="popup-description"></p>
 <p><strong id="popup-price"></strong></p>
-<button class="btn btn-primary" onclick="addToCartFromPopup()">أضف إلى السلة</button>
+<button  id="popup-add-button" class="btn btn-primary" onclick="addToCartFromPopup()">أضف إلى السلة</button>
 <button class="btn btn-secondary mt-2 w-100" onclick="closePopup('product-popup')">إغلاق</button>
 </div>
 <!-- إتمام الطلب -->
@@ -196,7 +196,8 @@
         shortDesc: item.shortDesc || '',
         description: item.description || '',
         images: (item.images || '').split(',').map(s => s.trim()).filter(s => s),
-        colors: (item.colors || '').split(',').map(c => c.trim()).filter(c => c)
+        colors: (item.colors || '').split(',').map(c => c.trim()).filter(c => c),
+        available: item.available?.toLowerCase() === 'yes' 
       }));
       displayProducts();
     });
@@ -238,17 +239,24 @@
       const card = document.createElement('div');
       card.className = 'col-6 col-md-3';
 
-      card.innerHTML = `
-        <div class="card product-card">
-          <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
-          <div class="card-body">
-            <h5 class="card-title">${product.name}</h5>
-            <p class="card-text">${product.shortDesc}</p>
-            <p class="card-text text-danger fw-bold">$${product.price} <span class="text-muted text-decoration-line-through">$${product.oldPrice}</span></p>
-            <button class="btn btn-sm btn-outline-primary" onclick='addToCart(${product.id})'>أضف إلى السلة</button>
-            <button class="btn btn-sm btn-link" onclick='showProductPopup(${product.id})'>عرض التفاصيل</button>
-          </div>
-        </div>`;
+     const availableText = product.available ? '' : '<div class="text-danger fw-bold">غير متوفر حالياً</div>';
+
+const addButton = product.available
+  ? `<button class="btn btn-sm btn-outline-primary" onclick='addToCart(${product.id})'>أضف إلى السلة</button>`
+  : `<button class="btn btn-sm btn-secondary" disabled>غير متوفر</button>`;
+
+card.innerHTML = `
+  <div class="card product-card">
+    <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
+    <div class="card-body">
+      <h5 class="card-title">${product.name}</h5>
+      <p class="card-text">${product.shortDesc}</p>
+      <p class="card-text text-danger fw-bold">$${product.price} <span class="text-muted text-decoration-line-through">$${product.oldPrice}</span></p>
+      ${availableText}
+      ${addButton}
+      <button class="btn btn-sm btn-link" onclick='showProductPopup(${product.id})'>عرض التفاصيل</button>
+    </div>
+  </div>`;
       container.appendChild(card);
     });
   }
@@ -326,11 +334,18 @@
     document.getElementById('popup-title').textContent = currentProduct.name;
     document.getElementById('popup-description').textContent = currentProduct.description;
     document.getElementById('popup-price').textContent = `$${currentProduct.price} (كان $${currentProduct.oldPrice})`;
+    
+    const addBtn = document.getElementById('popup-add-button');
 
     const carouselInner = document.getElementById('popup-carousel-inner');
     const thumbnails = document.getElementById('popup-thumbnails');
     carouselInner.innerHTML = '';
     thumbnails.innerHTML = '';
+
+
+    addBtn.disabled = !currentProduct.available;
+addBtn.textContent = currentProduct.available ? "أضف إلى السلة" : "غير متوفر";
+addBtn.className = currentProduct.available ? "btn btn-primary" : "btn btn-secondary";
 
     currentProduct.images.forEach((img, idx) => {
       const item = document.createElement('div');
