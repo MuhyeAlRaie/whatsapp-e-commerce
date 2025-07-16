@@ -505,6 +505,23 @@ ${appliedCoupon ? `كود الخصم: ${appliedCoupon} (${discountPercent}%)\n` 
 const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(framedMessage)}`;
   window.open(whatsappURL, '_blank');
 
+
+  fetch(CONFIG.ORDERS_API_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    name,
+    phone,
+    area: selectedArea,
+    address,
+    payment,
+    items: orderItems,
+    deliveryFee: deliveryFee.toFixed(2),
+    coupon: appliedCoupon || '',
+    discountAmount: discountAmount.toFixed(2),
+    total: totalAfter.toFixed(2)
+  }),
+ 
+});
     cart.length = 0;
     appliedCoupon = null;
     discountPercent = 0;
@@ -520,22 +537,7 @@ const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURICom
     saveCart();
     closePopup('checkout-popup');
 
- fetch(CONFIG.ORDERS_API_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    name,
-    phone,
-    area: selectedArea,
-    address,
-    payment,
-    items: orderItems,
-    deliveryFee: deliveryFee.toFixed(2),
-    coupon: appliedCoupon || '',
-    discountAmount: discountAmount.toFixed(2),
-     total: totalAfter.toFixed(2)
-  }),
  
-});
 
   } else {
     alert('يرجى تعبئة جميع الحقول واختيار المنطقة.');
