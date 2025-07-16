@@ -7,7 +7,7 @@ const CONFIG = {
   PRODUCTS_API_URL: "https://script.google.com/macros/s/AKfycbwzLk31B9W5GYm1Tmk1Ht7eDrQiBLxaMEzqq7pxxjBziHhK16H9VZhyYfGwwHPVHE8NBA/exec",
 
   // رابط Google Apps Script لتخزين الطلبات في Google Sheet
-  ORDERS_API_URL: "https://script.google.com/macros/s/AKfycbwKUMbVcs8WSwr-RXSuZkIJq0ePVQvQqOv90Bdv7PUVOFCJ1KhdlcwObNmJuJZWewiU/exec",
+  ORDERS_API_URL: "https://script.google.com/macros/s/AKfycbyXhSjuzDmHZvZPvGcQews8oTsrqQp9rDQd3o1pDPBJlYune1bKrmooSa0dspbBryct/exec",
 
   // رسوم التوصيل حسب المناطق (تعديل حسب الحاجة)
   DELIVERY_FEES: {
