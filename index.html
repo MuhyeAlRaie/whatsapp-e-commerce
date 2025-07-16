@@ -465,23 +465,21 @@ function applyCoupon() {
   if (CONFIG.COUPONS[code]) {
     appliedCoupon = code;
     discountPercent = CONFIG.COUPONS[code];
-    discountAmount = (cartTotal * discountPercent / 100);
-    totalAfter = cartTotal - discountAmount;
-    input.disabled = true;
-    document.getElementById('coupon-message').textContent = `تم تطبيق خصم ${discountPercent}%`;
-   updateCart();
+    message.textContent = `تم تطبيق كوبون الخصم (${discountPercent}%) بنجاح ✅`;
+    message.style.color = 'green';
+    message.style.display = 'block';
+    document.getElementById('coupon-code').disabled = true;
+
+    updateCart();
     updateOrderSummary();
   } else {
     appliedCoupon = null;
     discountPercent = 0;
-    discountAmount = 0;
-    totalAfter = cartTotal;
-    document.getElementById('coupon-message').textContent = '❌ الكوبون غير صالح';
-       updateCart();
-
+    message.textContent = '❌ الكود غير صالح';
+    message.style.color = 'red';
+    message.style.display = 'block';
+    updateCart();
   }
-
-  updateCheckoutSummary(); // تحديث ملخص السلة
 }
 
 
