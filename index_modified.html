@@ -520,20 +520,11 @@ const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURICom
     saveCart();
     closePopup('checkout-popup');
 
-    fetch(CONFIG.ORDERS_API_URL, {
+   fetch(CONFIG.ORDERS_API_URL, {
   method: "POST",
   body: JSON.stringify({
-    name,
-    phone,
-    area: selectedArea,
-    address,
-    payment,
-    items: orderItems,
-    total: totalAfter.toFixed(2)
-  }),
-  headers: {
-    "Content-Type": "application/json"
-  }
+    name, phone, area: selectedArea, address, payment, items: orderItems, total: totalAfter.toFixed(2)
+  })
 });
 
   } else {
