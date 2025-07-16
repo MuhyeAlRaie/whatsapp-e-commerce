@@ -488,20 +488,27 @@ function applyCoupon() {
     const discountAmount = discountPercent > 0 ? totalBefore * discountPercent / 100 : 0;
     const totalAfter = totalBefore - discountAmount + deliveryFee;
 
-    const message = `مرحبا، اسمي ${name}. أرغب بطلب:
+   const framedMessage = `
+╔═══════════════ طلب شراء ═══════════════╗
 
 ${orderItems}
 
 ${appliedCoupon ? `كود الخصم: ${appliedCoupon} (${discountPercent}%)\n` : ''}
+
 رسوم التوصيل: ${deliveryFee.toFixed(2)} د.أ
-المنطقة: ${selectedArea}
 المجموع النهائي: ${totalAfter.toFixed(2)} د.أ
+
+المنطقة: ${selectedArea}
+
 الهاتف: ${phone}
 العنوان: ${address}
-الدفع: ${payment}`;
+الدفع: ${payment}
 
-    const whatsappURL = `https://wa.me/962781313782?text=${encodeURIComponent(message)}`;
-    window.open(whatsappURL, '_blank');
+╚════════════════════════════════════════╝
+  `;
+
+  const whatsappURL = `https://wa.me/962781313782?text=${encodeURIComponent(framedMessage)}`;
+  window.open(whatsappURL, '_blank');
 
     cart.length = 0;
     appliedCoupon = null;
