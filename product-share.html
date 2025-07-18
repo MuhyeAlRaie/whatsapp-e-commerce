@@ -1,22 +1,55 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta property="og:title" content="اسم المنتج">
-  <meta property="og:description" content="الوصف القصير">
-  <meta property="og:image" content="رابط الصورة الأولى">
-  <meta property="og:url" content="الرابط الكامل للمنتج">
-  <meta property="og:type" content="product">
-  <title>مشاركة منتج</title>
-</head>
-<body>
+  <meta charset="UTF-8" />
+  <title>مشاركة المنتج</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (id) {
-      // إعادة توجيه المستخدم إلى الصفحة الرئيسية وفتح المنتج
-      window.location.href = `index.html#product-${id}`;
+    // بيانات API
+    const API_URL = "https://script.google.com/macros/s/AKfycbyQ1eG5EynTHOpxJNFQBVJiAU5QTX880Y-jctfM1GS1UVkpOXOFZ_SEqI1GTAQ87UUPhA/exec";
+
+    // أخذ ID من الرابط
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+
+    if (!id) {
+      document.write("❌ لا يوجد معرف منتج");
+    } else {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(products => {
+          const product = products.find(p => p.id == id);
+          if (!product) {
+            document.write("❌ لم يتم العثور على المنتج");
+            return;
+          }
+
+          // إعداد OG Tags
+          const title = product.name || "منتج من المتجر";
+          const desc = product.shortDesc || "اكتشف هذا المنتج المميز";
+          const image = (product.images || "").split(',')[0]?.trim() || "https://via.placeholder.com/600x400?text=Product";
+          const shareUrl = `${location.origin}/product-share.html?id=${id}`;
+
+          document.head.innerHTML += `
+            <meta property="og:title" content="${title}">
+            <meta property="og:description" content="${desc}">
+            <meta property="og:image" content="${image}">
+            <meta property="og:url" content="${shareUrl}">
+            <meta property="og:type" content="product">
+          `;
+
+          // عرض رسالة وتحويل
+          document.body.innerHTML = "<p>✅ جاري تحويلك إلى المنتج...</p>";
+          setTimeout(() => {
+            location.href = `${location.origin}/index.html#product-${id}`;
+          }, 2000);
+        })
+        .catch(err => {
+          document.body.innerHTML = "❌ خطأ في تحميل المنتج";
+        });
     }
   </script>
+</head>
+<body>
 </body>
 </html>
