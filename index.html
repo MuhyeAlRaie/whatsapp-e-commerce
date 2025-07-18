@@ -564,7 +564,7 @@ function shareProduct(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-const productUrl = `${window.location.origin}/product-share.html?id=${product.id}`;
+const productUrl = `${window.location.origin}/whatsapp-e-commerce/product-share.html?id=${product.id}`;
   const text = `شاهد هذا المنتج: ${product.name} - بسعر ${product.price} د.أ\n${productUrl}`;
 
   if (navigator.share) {
