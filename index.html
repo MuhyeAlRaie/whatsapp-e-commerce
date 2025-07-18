@@ -578,8 +578,7 @@ const productUrl = `${window.location.origin}/whatsapp-e-commerce/product-share.
   } else {
     const encodedText = encodeURIComponent(text);
     const whatsapp = `https://wa.me/?text=${encodedText}`;
-    const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
-    const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`;
+    const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(encodedText)}`;
 
     const win = window.open("", "_blank", "width=320,height=360");
     win.document.write(`
@@ -594,7 +593,6 @@ const productUrl = `${window.location.origin}/whatsapp-e-commerce/product-share.
         <body>
           <h3>مشاركة المنتج</h3>
           <a href="${whatsapp}" target="_blank">📱 واتساب</a>
-          <a href="${twitter}" target="_blank">🐦 تويتر</a>
           <a href="${facebook}" target="_blank">📘 فيسبوك</a>
           <button onclick="navigator.clipboard.writeText('${productUrl}').then(() => alert('✅ تم نسخ الرابط!'))">
             🔗 نسخ رابط المنتج
