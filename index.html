@@ -145,10 +145,10 @@
 <input class="form-control mb-2" id="name" placeholder="الاسم" type="text"/>
 <input class="form-control mb-2" id="phone" placeholder="رقم الهاتف" type="text"/>
 <select class="form-select mb-2" id="delivery-area" onchange="updateDeliveryFee()">
-<option disabled="" selected="" value="">اختر منطقة التوصيل</option>
-<option value="area1">المنطقة 1</option>
-<option value="area2">المنطقة 2</option>
-<option value="area3">المنطقة 3</option>
+<option disabled="" selected=""  value="">اختر منطقة التوصيل</option>
+<option value="area1">الزرقاء</option>
+<option value="area2">عمان</option>
+<option value="area3">إربد</option>
 </select>
 <div class="mb-2" id="delivery-fee-message" style="font-weight: bold;"></div>
 <input class="form-control mb-2" id="address" placeholder="العنوان" type="text"/>
@@ -432,9 +432,9 @@ addBtn.className = currentProduct.available ? "btn btn-primary" : "btn btn-secon
 }
 
 const deliveryFees = {
-  area1: 5,  // رسوم التوصيل 5 د.أ للمنطقة 1
-  area2: 10, // رسوم التوصيل 10 د.أ للمنطقة 2
-  area3: 15  // رسوم التوصيل 15 د.أ للمنطقة 3
+  area1: 2,  // رسوم التوصيل 5 د.أ للمنطقة 1
+  area2: 2.5, // رسوم التوصيل 10 د.أ للمنطقة 2
+  area3: 3  // رسوم التوصيل 15 د.أ للمنطقة 3
 };
 let deliveryFee = 0;
 
@@ -525,9 +525,9 @@ function getUserLocation() {
   const address = document.getElementById('address').value;
   const payment = document.getElementById('payment').value;
   const areaSelect = document.getElementById('delivery-area');
-  const selectedArea = areaSelect.options[areaSelect.selectedIndex]?.text || '';
+  const selectedArea = areaSelect.options[areaSelect.selectedIndex]?.text ;
 
-  if (name && phone && address && payment && selectedArea) {
+  if (name && phone && address && payment && selectedArea !== 'اختر منطقة التوصيل') {
     const orderItems = cart.map(i => `- (${i.id}) ${i.name}${i.color ? ' - ' + i.color : ''} × ${i.quantity}`).join('\n');
     const totalBefore = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const discountAmount = discountPercent > 0 ? totalBefore * discountPercent / 100 : 0;
