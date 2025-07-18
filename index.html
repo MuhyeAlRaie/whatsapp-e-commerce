@@ -561,7 +561,7 @@ const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURICom
   // window.open(whatsappURL, '_blank');
 
 
-  fetch(CONFIG.ORDERS_API_URL, {
+fetch(CONFIG.ORDERS_API_URL, {
   method: "POST",
   body: JSON.stringify({
     name,
@@ -576,8 +576,20 @@ const whatsappURL = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURICom
     discountAmount: discountAmount.toFixed(2),
     total: totalAfter.toFixed(2)
   }),
- 
+})
+.then(res => res.json())
+.then(data => {
+  if (data.success) {
+    localStorage.removeItem("cart"); // تفريغ السلة
+    window.location.href = "thankyou.html"; // التوجيه لصفحة الشكر
+  } else {
+    alert("❌ فشل إرسال الطلب");
+  }
+})
+.catch(() => {
+  alert("⚠️ حدث خطأ في الاتصال بالخادم");
 });
+
     cart.length = 0;
     appliedCoupon = null;
     discountPercent = 0;
