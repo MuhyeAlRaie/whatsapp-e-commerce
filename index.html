@@ -87,7 +87,7 @@
 <a class="navbar-brand" href="#"><img alt="الشعار" src="assets/img/logo.png" style="max-width: 150px;"/></a>
 <div class="me-auto">
 <button class="btn btn-outline-primary" onclick="toggleCartPopup()">
-        🛒 <span id="cart-count">0</span>
+        🛒 <span id="cart-count"></span>
 </button>
 </div>
 </div>
@@ -152,7 +152,7 @@
 <option value="area3">إربد</option>
 </select>
 <div class="mb-2" id="delivery-fee-message" style="font-weight: bold;"></div>
-<input class="form-control mb-2" id="address" placeholder="العنوان" type="text"/>
+<input type="text" id="address" class="form-control" disabled placeholder="اضغط على (استخدم موقعي الحالي)">
 <button class="btn btn-sm btn-outline-secondary mb-2" onclick="getUserLocation()">استخدم موقعي الحالي</button>
 <div id="location-error">⚠️ لم نتمكن من الحصول على موقعك. تأكد من السماح للموقع في إعدادات المتصفح.</div>
 
@@ -258,7 +258,10 @@ card.innerHTML = `
     <div class="card-body">
       <h5 class="card-title">${product.name}</h5>
       <p class="card-text">${product.shortDesc}</p>
-      <p class="card-text text-danger fw-bold">$${product.price} <span class="text-muted text-decoration-line-through">$${product.oldPrice}</span></p>
+     <p class="card-text text-danger fw-bold">
+  $${product.price}
+  ${Number(product.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">$${product.oldPrice}</span>` : ''}
+</p>
       ${availableText}
       ${addButton}
       <button class="btn btn-sm btn-link" onclick='showProductPopup(${product.id})'>عرض التفاصيل</button>
@@ -340,7 +343,10 @@ card.innerHTML = `
 
     document.getElementById('popup-title').textContent = currentProduct.name;
     document.getElementById('popup-description').textContent = currentProduct.description;
-    document.getElementById('popup-price').textContent = `$${currentProduct.price} (كان $${currentProduct.oldPrice})`;
+   document.getElementById('popup-price').innerHTML = `
+  $${currentProduct.price}
+  ${Number(currentProduct.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">(كان $${currentProduct.oldPrice})</span>` : ''}
+`;
     
     const addBtn = document.getElementById('popup-add-button');
 
@@ -501,7 +507,7 @@ function getUserLocation() {
 
         // أضف الرابط إلى خانة العنوان الحالية
         if (addressInput.value.trim()) {
-          addressInput.value += ` - الموقع: ${locationURL}`;
+          addressInput.value = ` - الموقع: ${locationURL}`;
         } else {
           addressInput.value = `الموقع: ${locationURL}`;
         }
@@ -581,6 +587,7 @@ fetch(CONFIG.ORDERS_API_URL, {
 .then(data => {
   if (data.success) {
     localStorage.removeItem("cart"); // تفريغ السلة
+    closePopup('checkout-popup');
     window.location.href = "thankyou.html"; // التوجيه لصفحة الشكر
   } else {
     alert("❌ فشل إرسال الطلب");
