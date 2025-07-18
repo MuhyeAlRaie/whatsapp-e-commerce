@@ -152,8 +152,9 @@
 </select>
 <div class="mb-2" id="delivery-fee-message" style="font-weight: bold;"></div>
 <input class="form-control mb-2" id="address" placeholder="العنوان" type="text"/>
-<!-- <button class="btn btn-sm btn-outline-secondary mb-2" onclick="getUserLocation()">استخدم موقعي الحالي</button> -->
-<!-- <div id="location-error">⚠️ لم نتمكن من الحصول على موقعك. تأكد من السماح للموقع في إعدادات المتصفح.</div> -->
+<button class="btn btn-sm btn-outline-secondary mb-2" onclick="getUserLocation()">استخدم موقعي الحالي</button>
+<div id="location-error">⚠️ لم نتمكن من الحصول على موقعك. تأكد من السماح للموقع في إعدادات المتصفح.</div>
+
 <select class="form-select mb-3" id="payment">
 <option value="cash">نقداً</option>
 <option value="CliQ">CliQ</option>
@@ -483,6 +484,35 @@ function applyCoupon() {
   }
 }
 
+let userLocation = null;
+
+function getUserLocation() {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        const locationURL = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        const addressInput = document.getElementById('address');
+
+        // أضف الرابط إلى خانة العنوان الحالية
+        if (addressInput.value.trim()) {
+          addressInput.value += ` - الموقع: ${locationURL}`;
+        } else {
+          addressInput.value = `الموقع: ${locationURL}`;
+        }
+
+        document.getElementById('location-error').style.display = 'none';
+        alert("✅ تم إدراج موقعك في خانة العنوان");
+      },
+      error => {
+        console.error("Location error:", error);
+        document.getElementById('location-error').style.display = 'block';
+      }
+    );
+  } else {
+    alert("المتصفح لا يدعم تحديد الموقع");
+  }
+}
 
 
   function submitOrder() {
@@ -513,6 +543,8 @@ ${appliedCoupon ? `كود الخصم: ${appliedCoupon} (${discountPercent}%)\n` 
 
 الهاتف: ${phone}
 العنوان: ${address}
+${userLocation ? `📍 الموقع: ${userLocation}` : ''}
+
 الدفع: ${payment}
 
 ╚════════════════════════════════════════╝
