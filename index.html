@@ -13,6 +13,7 @@
       color: white;
       text-align: center;
       padding: 100px 20px;
+      height: 600px;
     }
     .product-card img {
       height: 200px;
@@ -296,6 +297,9 @@ card.innerHTML = `
       ${availableText}
       ${addButton}
       <button class="btn btn-sm btn-link" onclick='showProductPopup(${product.id})'>عرض التفاصيل</button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="shareProduct(${product.id})">
+  📤 مشاركة
+</button>
     </div>
   </div>`;
       container.appendChild(card);
@@ -553,6 +557,50 @@ function getUserLocation() {
     );
   } else {
     alert("المتصفح لا يدعم تحديد الموقع");
+  }
+}
+
+function shareProduct(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+
+  const productUrl = window.location.href.split('#')[0] + `#product-${productId}`;
+  const text = `شاهد هذا المنتج: ${product.name} - بسعر ${product.price} د.أ\n${productUrl}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: product.name,
+      text: text,
+      url: productUrl
+    }).catch(err => console.log("فشل المشاركة:", err));
+  } else {
+    const encodedText = encodeURIComponent(text);
+    const whatsapp = `https://wa.me/?text=${encodedText}`;
+    const twitter = `https://twitter.com/intent/tweet?text=${encodedText}`;
+    const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`;
+
+    const win = window.open("", "_blank", "width=320,height=360");
+    win.document.write(`
+      <html lang="ar" dir="rtl">
+        <head>
+          <title>مشاركة المنتج</title>
+          <style>
+            body { font-family: Arial; padding: 20px; text-align: center; }
+            a, button { display: block; margin: 10px 0; text-decoration: none; font-size: 16px; }
+          </style>
+        </head>
+        <body>
+          <h3>مشاركة المنتج</h3>
+          <a href="${whatsapp}" target="_blank">📱 واتساب</a>
+          <a href="${twitter}" target="_blank">🐦 تويتر</a>
+          <a href="${facebook}" target="_blank">📘 فيسبوك</a>
+          <button onclick="navigator.clipboard.writeText('${productUrl}').then(() => alert('✅ تم نسخ الرابط!'))">
+            🔗 نسخ رابط المنتج
+          </button>
+        </body>
+      </html>
+    `);
+    win.document.close();
   }
 }
 
