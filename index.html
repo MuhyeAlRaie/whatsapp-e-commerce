@@ -185,12 +185,13 @@
 
 <script>
   let products = [];
-  fetch(CONFIG.PRODUCTS_API_URL)
-    .then(res => res.json())
-    .then(data => {
-      products = data.map(item => ({
+ fetch(CONFIG.PRODUCTS_API_URL)
+  .then(res => res.json())
+  .then(data => {
+    products = data
+      .map(item => ({
         id: Number(item.id || 0),
-        name: item.name || 'منتج بدون اسم',
+        name: item.name || '',
         category: item.category || 'other',
         price: Number(item.price || 0),
         oldPrice: Number(item.oldPrice || 0),
@@ -199,9 +200,11 @@
         images: (item.images || '').split(',').map(s => s.trim()).filter(s => s),
         colors: (item.colors || '').split(',').map(c => c.trim()).filter(c => c),
         available: item.available?.toLowerCase() === 'yes' 
-      }));
-      displayProducts();
-    });
+      }))
+      .filter(p => p.name.trim() !== ''); // ✅ لا تعرض المنتجات بدون اسم
+
+    displayProducts();
+  });
 
   function refreshProducts() {
     fetch(CONFIG.PRODUCTS_API_URL)
@@ -219,6 +222,7 @@
           colors: (item.colors || '').split(',').map(c => c.trim()).filter(c => c),
           available: item.available?.toLowerCase() === 'yes' 
         }));
+         if (!p.name || p.name.trim() === "") return;
         displayProducts();
       });
   }
