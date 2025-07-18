@@ -584,14 +584,14 @@ const productUrl = `${window.location.origin}/whatsapp-e-commerce/product-share.
     win.document.write(`
       <html lang="ar" dir="rtl">
         <head>
-          <title>مشاركة المنتج</title>
+          <title>${product.name}</title>
           <style>
             body { font-family: Arial; padding: 20px; text-align: center; }
             a, button { display: block; margin: 10px 0; text-decoration: none; font-size: 16px; }
           </style>
         </head>
         <body>
-          <h3>مشاركة المنتج</h3>
+          <h3>${product.name}</h3>
           <a href="${whatsapp}" target="_blank">📱 واتساب</a>
           <a href="${facebook}" target="_blank">📘 فيسبوك</a>
           <button onclick="navigator.clipboard.writeText('${productUrl}').then(() => alert('✅ تم نسخ الرابط!'))">
