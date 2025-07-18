@@ -708,7 +708,7 @@ fetch(CONFIG.ORDERS_API_URL, {
     const hash = window.location.hash;
     if (hash && hash.startsWith('#product-')) {
       const productId = parseInt(hash.replace('#product-', ''));
-      setTimeout(() => showProductPopup(productId), 6000); // انتظر قليلاً حتى يتم تحميل المنتجات
+      setTimeout(() => showProductPopup(productId), 500); // انتظر قليلاً حتى يتم تحميل المنتجات
     }
   });
 </script>
