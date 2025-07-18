@@ -564,7 +564,7 @@ function shareProduct(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  const productUrl = window.location.href.split('#')[0] + `#product-${productId}`;
+const productUrl = `${window.location.origin}/product-share.html?id=${product.id}`;
   const text = `شاهد هذا المنتج: ${product.name} - بسعر ${product.price} د.أ\n${productUrl}`;
 
   if (navigator.share) {

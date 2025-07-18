@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta property="og:title" content="اسم المنتج">
+  <meta property="og:description" content="الوصف القصير">
+  <meta property="og:image" content="رابط الصورة الأولى">
+  <meta property="og:url" content="الرابط الكامل للمنتج">
+  <meta property="og:type" content="product">
+  <title>مشاركة منتج</title>
+</head>
+<body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) {
+      // إعادة توجيه المستخدم إلى الصفحة الرئيسية وفتح المنتج
+      window.location.href = `index.html#product-${id}`;
+    }
+  </script>
+</body>
+</html>
