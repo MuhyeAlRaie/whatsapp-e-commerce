@@ -4,10 +4,10 @@ const CONFIG = {
   CURRENCY: "د.أ",
   
   // رابط Google Apps Script لقراءة المنتجات من Google Sheet
-  PRODUCTS_API_URL: "https://script.google.com/macros/s/AKfycbyWjt64bxMAJIoaV1FbAQoYEU0wHRFJ7EUFGgBq4YNWqBWKmAQFBTHCDDCBoLLla40gnQ/exec",
+  PRODUCTS_API_URL: "https://script.google.com/macros/s/AKfycbxn4D8F8pC0bsR_pNNOHntfWZaVpH78priC_jW-GvkQ-Ja3_ILUkE5mGx8Dv8ZS4u7rEw/exec",
 
   // رابط Google Apps Script لتخزين الطلبات في Google Sheet
-  ORDERS_API_URL: "https://script.google.com/macros/s/AKfycbzX6MUglLN46AlqD99QZ7LY31e3IWFx8BopRcfPewX0mO7gbHPzsFG-yTzVRQUqmGlH/exec",
+  ORDERS_API_URL: "https://script.google.com/macros/s/AKfycbwJRe8olR0btp-A-TWeypbNp4BzWODqjezuCPsF9kfKlL-_FTGkVqAOmQVV7eI9LNA/exec",
 
   // رسوم التوصيل حسب المناطق (تعديل حسب الحاجة)
   DELIVERY_FEES: {
