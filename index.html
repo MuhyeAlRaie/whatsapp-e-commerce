@@ -23,23 +23,94 @@
 </div>
 </div>
 </nav>
-<!-- البانر -->
-<section class="hero">
-<h1>مرحباً بكم في متجرنا</h1>
-<p>اكتشف منتجاتنا المميزة</p>
+<!-- البانر / Hero Slider -->
+<section class="hero-slider">
+  <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+    <div class="carousel-indicators" id="hero-indicators">
+      <!-- Indicators will be dynamically generated -->
+    </div>
+    <div class="carousel-inner" id="hero-carousel-inner">
+      <!-- Default slide while loading -->
+      <div class="carousel-item active">
+        <div class="hero-slide">
+          <h1>مرحباً بكم في متجرنا</h1>
+          <p>اكتشف منتجاتنا المميزة</p>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 </section>
-<!-- الفلاتر -->
-<div class="container my-4 d-flex align-items-center justify-content-end">
-<input class="form-control w-25 ms-3" id="searchInput" oninput="displayProducts()" placeholder="ابحث عن منتج..." type="text"/>
-<div class="filter-buttons">
-<button class="btn btn-outline-dark" onclick="setFilter('all')">الكل</button>
-<button class="btn btn-outline-dark" onclick="setFilter('electronics')">إلكترونيات</button>
-<button class="btn btn-outline-dark" onclick="setFilter('fashion')">ملابس</button>
+<!-- المنتجات الأكثر مبيعاً -->
+<div class="container my-5">
+  <div class="row">
+    <div class="col-12">
+      <h3 class="text-center mb-4">🔥 الأكثر مبيعاً</h3>
+      <div class="row g-3" id="top-selling-products">
+        <!-- Top selling products will be loaded here -->
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- الفلاتر والبحث -->
+<div class="container my-4">
+  <div class="row align-items-center">
+    <div class="col-md-6">
+      <input class="form-control" id="searchInput" oninput="displayProducts()" placeholder="🔍 ابحث عن منتج..." type="text"/>
+    </div>
+    <div class="col-md-6">
+      <div class="filter-buttons d-flex flex-wrap justify-content-end">
+        <button class="btn btn-outline-dark active" onclick="setFilter('all')">الكل</button>
+        <button class="btn btn-outline-dark" onclick="setFilter('electronics')">إلكترونيات</button>
+        <button class="btn btn-outline-dark" onclick="setFilter('fashion')">ملابس</button>
+        <button class="btn btn-outline-dark" onclick="setFilter('home')">منزل</button>
+        <button class="btn btn-outline-dark" onclick="setFilter('sports')">رياضة</button>
+        <button class="btn btn-outline-dark" onclick="setFilter('books')">كتب</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- عرض عدد النتائج -->
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <span id="results-count" class="text-muted">جاري التحميل...</span>
+        <div class="d-flex align-items-center">
+          <label for="products-per-page" class="me-2">عرض:</label>
+          <select id="products-per-page" class="form-select form-select-sm" style="width: auto;" onchange="changeProductsPerPage()">
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="60">60</option>
+          </select>
+          <span class="ms-2">منتج</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
 <!-- المنتجات -->
 <div class="container">
-<div class="row g-4" id="products"></div>
+  <div class="row g-4" id="products"></div>
+  
+  <!-- Pagination -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <nav aria-label="Product pagination">
+        <ul class="pagination justify-content-center" id="pagination">
+          <!-- Pagination will be dynamically generated -->
+        </ul>
+      </nav>
+    </div>
+  </div>
 </div>
 <!-- السلة -->
 <div class="cart-popup" id="cart-popup">
@@ -103,7 +174,7 @@
 <button class="btn btn-success w-100" onclick="submitOrder()">تأكيد الطلب</button>
 <button class="btn btn-secondary mt-2 w-100" onclick="closePopup('checkout-popup')">إلغاء</button>
 </div>
-<!-- الفوتر -->
+<!-- الفوتر
 <footer class="bg-light text-center mt-5 py-4">
 <div>
 <a class="navbar-brand" href="#"><img alt="الشعار" src="assets/img/logo.png" style="max-width: 150px;"/></a>
@@ -112,7 +183,7 @@
     البريد الإلكتروني: info@brand.com<br/>
     الهاتف: +962-7-1234-5678
   </div>
-</footer> 
+</footer>  -->
  <script src="assets/js/config.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
@@ -126,5 +197,59 @@
   });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- الفوتر -->
+<footer class="bg-dark text-white py-5 mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <h5>📞 تواصل معنا</h5>
+        <p class="mb-2">📱 الهاتف: +962 781 313 782</p>
+        <p class="mb-2">📧 البريد: info@store.com</p>
+        <p class="mb-0">📍 العنوان: عمان، الأردن</p>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <h5>🌐 تابعنا على</h5>
+        <div class="d-flex gap-3">
+          <a href="https://facebook.com/yourstore" target="_blank" class="text-white text-decoration-none">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </a>
+          <a href="https://instagram.com/yourstore" target="_blank" class="text-white text-decoration-none">
+            <i class="fab fa-instagram"></i> Instagram
+          </a>
+        </div>
+      </div>
+      
+      <div class="col-md-4 mb-4">
+        <h5>💳 طرق الدفع</h5>
+        <div class="d-flex flex-column gap-2">
+          <div class="d-flex align-items-center">
+            <span class="me-2">💵</span>
+            <span>الدفع نقداً عند الاستلام</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="me-2">🏦</span>
+            <span>تحويل بنكي - CliQ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="my-4">
+    
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <p class="mb-0">&copy; 2025 متجر علي. جميع الحقوق محفوظة.</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <small class="text-muted">تم التطوير بواسطة فريق التطوير</small>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Font Awesome for social media icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </body>
 </html>

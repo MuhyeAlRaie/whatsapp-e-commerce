@@ -47,6 +47,9 @@
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
   let currentProduct = null;
   let currentFilter = 'all';
+  let currentPage = 1;
+  let productsPerPage = 20;
+  let filteredProducts = [];
 
   function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -54,43 +57,137 @@
 
   function displayProducts() {
     const container = document.getElementById('products');
-    container.innerHTML = '';
     const search = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = products.filter(p => (currentFilter === 'all' || p.category === currentFilter) && p.name.toLowerCase().includes(search));
-    filtered.forEach(product => {
+    
+    // Filter products based on category and search
+    filteredProducts = products.filter(p => {
+      const matchesCategory = currentFilter === 'all' || p.category === currentFilter;
+      const matchesSearch = p.name.toLowerCase().includes(search) || 
+                           p.shortDesc.toLowerCase().includes(search) ||
+                           p.description.toLowerCase().includes(search);
+      return matchesCategory && matchesSearch;
+    });
+
+    // Update results count
+    updateResultsCount();
+
+    // Calculate pagination
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    const productsToShow = filteredProducts.slice(startIndex, endIndex);
+
+    // Clear container
+    container.innerHTML = '';
+
+    // Display products
+    productsToShow.forEach(product => {
       const card = document.createElement('div');
-      card.className = 'col-6 col-md-3';
+      card.className = 'col-6 col-md-4 col-lg-3';
 
-     const availableText = product.available ? '' : '<div class="text-danger fw-bold">غير متوفر حالياً</div>';
+      const availableText = product.available ? '' : '<div class="text-danger fw-bold">غير متوفر حالياً</div>';
 
-const addButton = product.available
-  ? `<button class="btn btn-sm btn-outline-primary" onclick='addToCart(${product.id})'>أضف إلى السلة</button>`
-  : `<button class="btn btn-sm btn-secondary" disabled>غير متوفر</button>`;
+      const addButton = product.available
+        ? `<button class="btn btn-sm btn-outline-primary" onclick='addToCart(${product.id})'>أضف إلى السلة</button>`
+        : `<button class="btn btn-sm btn-secondary" disabled>غير متوفر</button>`;
 
-card.innerHTML = `
-  <div class="card product-card">
-    <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
-    <div class="card-body">
-      <h5 class="card-title">${product.name}</h5>
-      <p class="card-text">${product.shortDesc}</p>
-     <p class="card-text text-danger fw-bold">
-  $${product.price}
-  ${Number(product.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">$${product.oldPrice}</span>` : ''}
-</p>
-      ${availableText}
-      ${addButton}
-      <button class="btn btn-sm btn-link" onclick='showProductPopup(${product.id})'>عرض التفاصيل</button>
-      <button class="btn btn-sm btn-outline-secondary" onclick="shareProduct(${product.id})">
-  📤 مشاركة
-</button>
-    </div>
-  </div>`;
+      card.innerHTML = `
+        <div class="card product-card h-100">
+          <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">${product.name}</h5>
+            <p class="card-text flex-grow-1">${product.shortDesc}</p>
+            <p class="card-text text-danger fw-bold">
+              $${product.price}
+              ${Number(product.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">$${product.oldPrice}</span>` : ''}
+            </p>
+            ${availableText}
+            <div class="mt-auto">
+              ${addButton}
+              <button class="btn btn-sm btn-link" onclick='showProductPopup(${product.id})'>عرض التفاصيل</button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="shareProduct(${product.id})">
+                📤 مشاركة
+              </button>
+            </div>
+          </div>
+        </div>`;
       container.appendChild(card);
     });
+
+    // Update pagination
+    updatePagination(totalPages);
+  }
+
+  function updateResultsCount() {
+    const resultsCount = document.getElementById('results-count');
+    const startIndex = (currentPage - 1) * productsPerPage + 1;
+    const endIndex = Math.min(currentPage * productsPerPage, filteredProducts.length);
+    
+    if (filteredProducts.length === 0) {
+      resultsCount.textContent = 'لا توجد منتجات تطابق البحث';
+    } else {
+      resultsCount.textContent = `عرض ${startIndex}-${endIndex} من ${filteredProducts.length} منتج`;
+    }
+  }
+
+  function updatePagination(totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    // Previous button
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">السابق</a>`;
+    pagination.appendChild(prevLi);
+
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const li = document.createElement('li');
+      li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+      li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+      pagination.appendChild(li);
+    }
+
+    // Next button
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">التالي</a>`;
+    pagination.appendChild(nextLi);
+  }
+
+  function changePage(page) {
+    if (page < 1 || page > Math.ceil(filteredProducts.length / productsPerPage)) return;
+    currentPage = page;
+    displayProducts();
+    // Scroll to top of products section
+    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function changeProductsPerPage() {
+    productsPerPage = parseInt(document.getElementById('products-per-page').value);
+    currentPage = 1; // Reset to first page
+    displayProducts();
   }
 
   function setFilter(filter) {
+    // Update active button
+    document.querySelectorAll('.filter-buttons .btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
     currentFilter = filter;
+    currentPage = 1; // Reset to first page when filter changes
     displayProducts();
   }
 
@@ -280,11 +377,169 @@ function updateDeliveryFee() {
 }
 
 
-  const coupons = {
-  "SAVE10": 10, 
-  "OFF20": 20, 
-  "VIP30": 30  
-};
+// Dynamic coupons loaded from Google Sheets
+let coupons = {};
+
+// Load coupons from Google Sheets API
+function loadCoupons() {
+  fetch(CONFIG.COUPONS_API_URL)
+    .then(res => res.json())
+    .then(data => {
+      coupons = {};
+      if (Array.isArray(data)) {
+        data.forEach(coupon => {
+          // Only include active coupons that haven't expired
+          const isActive = coupon.Active === true || coupon.Active === 'TRUE' || coupon.Active === 'true';
+          const isNotExpired = !coupon.ExpiryDate || new Date(coupon.ExpiryDate) >= new Date();
+          
+          if (isActive && isNotExpired && coupon.Code && coupon.Discount) {
+            coupons[coupon.Code.toUpperCase()] = parseFloat(coupon.Discount);
+          }
+        });
+      }
+      console.log('Loaded coupons:', coupons);
+    })
+    .catch(error => {
+      console.error('Error loading coupons:', error);
+      // Fallback to config coupons if API fails
+      coupons = CONFIG.COUPONS;
+    });
+}
+
+// Initialize coupons on page load
+loadCoupons();
+
+// ==================== TOP-SELLING PRODUCTS FUNCTIONS ====================
+
+// Load top-selling products from Google Sheets
+function loadTopSellingProducts() {
+  fetch(CONFIG.TOP_SELLING_API_URL + '?top_selling=true&limit=6&period=month')
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.data && data.data.length > 0) {
+        renderTopSellingProducts(data.data);
+      } else {
+        // Hide section if no data
+        document.getElementById('top-selling-products').parentElement.parentElement.style.display = 'none';
+      }
+    })
+    .catch(error => {
+      console.error('Error loading top-selling products:', error);
+      // Hide section on error
+      document.getElementById('top-selling-products').parentElement.parentElement.style.display = 'none';
+    });
+}
+
+// Render top-selling products
+function renderTopSellingProducts(topProducts) {
+  const container = document.getElementById('top-selling-products');
+  container.innerHTML = '';
+
+  topProducts.forEach(item => {
+    const product = products.find(p => p.id.toString() === item.productId.toString());
+    
+    if (product) {
+      const card = document.createElement('div');
+      card.className = 'col-6 col-md-4 col-lg-2';
+
+      const availableText = product.available ? '' : '<div class="text-danger fw-bold small">غير متوفر حالياً</div>';
+
+      const addButton = product.available
+        ? `<button class="btn btn-sm btn-outline-primary" onclick='addToCart(${product.id})'>أضف إلى السلة</button>`
+        : `<button class="btn btn-sm btn-secondary" disabled>غير متوفر</button>`;
+
+      card.innerHTML = `
+        <div class="card product-card h-100 border-warning">
+          <div class="position-relative">
+            <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
+            <div class="position-absolute top-0 end-0 bg-warning text-dark px-2 py-1 small rounded-bottom-start">
+              🔥 ${item.totalQuantitySold} مبيع
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column p-2">
+            <h6 class="card-title small">${product.name}</h6>
+            <p class="card-text text-danger fw-bold small">
+              $${product.price}
+              ${Number(product.oldPrice) > 0 ? `<span class="ms-1 text-muted text-decoration-line-through">$${product.oldPrice}</span>` : ''}
+            </p>
+            ${availableText}
+            <div class="mt-auto">
+              ${addButton}
+            </div>
+          </div>
+        </div>`;
+      container.appendChild(card);
+    }
+  });
+}
+
+// Load hero slider images from Google Sheets
+function loadHeroSlider() {
+  fetch(CONFIG.HERO_SLIDER_API_URL)
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        // Filter active slides and sort by order
+        const activeSlides = data.filter(slide => 
+          slide.Active === true || slide.Active === 'TRUE' || slide.Active === 'true'
+        ).sort((a, b) => (a.Order || 0) - (b.Order || 0));
+        
+        if (activeSlides.length > 0) {
+          renderHeroSlider(activeSlides);
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error loading hero slider:', error);
+      // Keep default slide if API fails
+    });
+}
+
+// Render hero slider with fetched data
+function renderHeroSlider(slides) {
+  const carouselInner = document.getElementById('hero-carousel-inner');
+  const indicators = document.getElementById('hero-indicators');
+  
+  // Clear existing content
+  carouselInner.innerHTML = '';
+  indicators.innerHTML = '';
+  
+  slides.forEach((slide, index) => {
+    // Create carousel item
+    const carouselItem = document.createElement('div');
+    carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+    
+    const heroSlide = document.createElement('div');
+    heroSlide.className = 'hero-slide';
+    
+    // Set background image if provided
+    if (slide.ImageURL) {
+      heroSlide.style.backgroundImage = `url('${slide.ImageURL}')`;
+    }
+    
+    heroSlide.innerHTML = `
+      <h1>${slide.Title || 'مرحباً بكم في متجرنا'}</h1>
+      <p>${slide.Subtitle || 'اكتشف منتجاتنا المميزة'}</p>
+    `;
+    
+    carouselItem.appendChild(heroSlide);
+    carouselInner.appendChild(carouselItem);
+    
+    // Create indicator
+    const indicator = document.createElement('button');
+    indicator.type = 'button';
+    indicator.setAttribute('data-bs-target', '#heroCarousel');
+    indicator.setAttribute('data-bs-slide-to', index.toString());
+    indicator.className = index === 0 ? 'active' : '';
+    indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+    indicator.setAttribute('aria-label', `Slide ${index + 1}`);
+    
+    indicators.appendChild(indicator);
+  });
+  
+  // Reinitialize Bootstrap carousel
+  const carousel = new bootstrap.Carousel(document.getElementById('heroCarousel'));
+}
 
 let appliedCoupon = null;
 let discountPercent = 0;
@@ -481,4 +736,10 @@ fetch(CONFIG.ORDERS_API_URL, {
 
   displayProducts();
   updateCart(); // ✅ تأكد من تحميل السلة بعد فتح الصفحة
+  loadCoupons(); // ✅ Load coupons when page loads
+  loadHeroSlider(); // ✅ Load hero slider when page loads
+  loadTopSellingProducts(); // ✅ Load top-selling products when page loads
   setInterval(refreshProducts, 10000); // يحدث كل دقيقة
+  setInterval(loadCoupons, 30000); // ✅ Refresh coupons every 30 seconds
+  setInterval(loadHeroSlider, 60000); // ✅ Refresh hero slider every minute
+  setInterval(loadTopSellingProducts, 300000); // ✅ Refresh top-selling products every 5 minutes

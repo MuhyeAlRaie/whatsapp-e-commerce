@@ -9,6 +9,15 @@ const CONFIG = {
   // رابط Google Apps Script لتخزين الطلبات في Google Sheet
   ORDERS_API_URL: "https://script.google.com/macros/s/AKfycbw-pT4ThTSIDbAlBfe-r2Q6rIkW9LFYRqWhLqlC8ExvJEb9l0V_WIlR--9F4ze2_ycn/exec",
 
+  // رابط Google Apps Script لإدارة الكوبونات من Google Sheet
+  COUPONS_API_URL: "https://script.google.com/macros/s/AKfycbwzGdb3o1wNNDzuV4AP0Pog9wSlBhqPvznqapsnYOaKhBGRt2edyaN0iHA6bB6EzXTU/exec", // ← Replace with your actual coupon API URL
+
+  // رابط Google Apps Script لإدارة صور البانر من Google Sheet
+  HERO_SLIDER_API_URL: "https://script.google.com/macros/s/AKfycby7VOYouaIBSa4jxkBkrCoFsGDGKQmr-vigqvQuC7kLeERLB19qAMXAsKROvEO3dNMp/exec", // ← Replace with your actual hero slider API URL
+
+  // رابط Google Apps Script لتحليل المنتجات الأكثر مبيعاً من Google Sheet (using Orders API)
+  TOP_SELLING_API_URL: "https://script.google.com/macros/s/AKfycbyDGk9Bd2yynaBQAKmsvQYH9clQTwQQvUpv9J5cP5UZ_zZJ7AjpHmaWkAZDI5TekFzT/exec",
+
   // رسوم التوصيل حسب المناطق (تعديل حسب الحاجة)
   DELIVERY_FEES: {
     area1: 5,
@@ -16,7 +25,7 @@ const CONFIG = {
     area3: 15
   },
 
-  // الكوبونات المسموح بها (خصم بنسبة مئوية)
+  // الكوبونات المسموح بها (خصم بنسبة مئوية) - سيتم استبدالها بالبيانات من Google Sheets
   COUPONS: {
     SAVE10: 10,
     VIP20: 20,
