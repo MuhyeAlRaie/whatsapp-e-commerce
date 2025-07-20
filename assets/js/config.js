@@ -13,7 +13,7 @@ const CONFIG = {
   COUPONS_API_URL: "https://script.google.com/macros/s/AKfycbwzGdb3o1wNNDzuV4AP0Pog9wSlBhqPvznqapsnYOaKhBGRt2edyaN0iHA6bB6EzXTU/exec", // ← Replace with your actual coupon API URL
 
   // رابط Google Apps Script لإدارة صور البانر من Google Sheet
-  HERO_SLIDER_API_URL: "https://script.google.com/macros/s/AKfycby7VOYouaIBSa4jxkBkrCoFsGDGKQmr-vigqvQuC7kLeERLB19qAMXAsKROvEO3dNMp/exec", // ← Replace with your actual hero slider API URL
+  HERO_SLIDER_API_URL: "https://script.google.com/macros/s/AKfycbx2bOYD5aMCYvgcKmmpfLVdQctrKsttXSYMNCjfUNJj1tyttY0CM7mVCNPnNRMJYUFf/exec", // ← Replace with your actual hero slider API URL
 
   // رابط Google Apps Script لتحليل المنتجات الأكثر مبيعاً من Google Sheet (using Orders API)
   TOP_SELLING_API_URL: "https://script.google.com/macros/s/AKfycbyDGk9Bd2yynaBQAKmsvQYH9clQTwQQvUpv9J5cP5UZ_zZJ7AjpHmaWkAZDI5TekFzT/exec",
