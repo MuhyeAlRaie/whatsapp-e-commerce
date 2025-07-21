@@ -473,73 +473,6 @@ function renderTopSellingProducts(topProducts) {
   });
 }
 
-// Load hero slider images from Google Sheets
-function loadHeroSlider() {
-  fetch(CONFIG.HERO_SLIDER_API_URL)
-    .then(res => res.json())
-    .then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        // Filter active slides and sort by order
-        const activeSlides = data.filter(slide => 
-          slide.Active === true || slide.Active === 'TRUE' || slide.Active === 'true'
-        ).sort((a, b) => (a.Order || 0) - (b.Order || 0));
-        
-        if (activeSlides.length > 0) {
-          renderHeroSlider(activeSlides);
-        }
-      }
-    })
-    .catch(error => {
-      console.error('Error loading hero slider:', error);
-      // Keep default slide if API fails
-    });
-}
-
-// Render hero slider with fetched data
-function renderHeroSlider(slides) {
-  const carouselInner = document.getElementById('hero-carousel-inner');
-  const indicators = document.getElementById('hero-indicators');
-  
-  // Clear existing content
-  carouselInner.innerHTML = '';
-  indicators.innerHTML = '';
-  
-  slides.forEach((slide, index) => {
-    // Create carousel item
-    const carouselItem = document.createElement('div');
-    carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
-    
-    const heroSlide = document.createElement('div');
-    heroSlide.className = 'hero-slide';
-    
-    // Set background image if provided
-    if (slide.ImageURL) {
-      heroSlide.style.backgroundImage = `url('${slide.ImageURL}')`;
-    }
-    
-    heroSlide.innerHTML = `
-      <h1>${slide.Title || 'مرحباً بكم في متجرنا'}</h1>
-      <p>${slide.Subtitle || 'اكتشف منتجاتنا المميزة'}</p>
-    `;
-    
-    carouselItem.appendChild(heroSlide);
-    carouselInner.appendChild(carouselItem);
-    
-    // Create indicator
-    const indicator = document.createElement('button');
-    indicator.type = 'button';
-    indicator.setAttribute('data-bs-target', '#heroCarousel');
-    indicator.setAttribute('data-bs-slide-to', index.toString());
-    indicator.className = index === 0 ? 'active' : '';
-    indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
-    indicator.setAttribute('aria-label', `Slide ${index + 1}`);
-    
-    indicators.appendChild(indicator);
-  });
-  
-  // Reinitialize Bootstrap carousel
-  const carousel = new bootstrap.Carousel(document.getElementById('heroCarousel'));
-}
 
 let appliedCoupon = null;
 let discountPercent = 0;
@@ -751,9 +684,7 @@ fetch(CONFIG.ORDERS_API_URL, {
   displayProducts();
   updateCart(); // ✅ تأكد من تحميل السلة بعد فتح الصفحة
   loadCoupons(); // ✅ Load coupons when page loads
-  loadHeroSlider(); // ✅ Load hero slider when page loads
   loadTopSellingProducts(); // ✅ Load top-selling products when page loads
   setInterval(refreshProducts, 10000); // يحدث كل دقيقة
   setInterval(loadCoupons, 30000); // ✅ Refresh coupons every 30 seconds
-  setInterval(loadHeroSlider, 60000); // ✅ Refresh hero slider every minute
   setInterval(loadTopSellingProducts, 300000); // ✅ Refresh top-selling products every 5 minutes
