@@ -701,15 +701,29 @@ fetch(CONFIG.ORDERS_API_URL, {
 .then(res => res.json())
 .then(data => {
   if (data.success) {
-    localStorage.removeItem("cart"); // تفريغ السلة
-    closePopup('checkout-popup');
-    window.location.href = "thankyou.html"; // التوجيه لصفحة الشكر
+    // Call reduceStock API after order is successful
+    return fetch(CONFIG.PRODUCTS_API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "reduce_on_order",
+        items: orderItems
+      })
+    })
+    .then(res => res.json())
+    .then(stockRes => {
+      if (stockRes.success) {
+        // Optionally refresh stock display
+      }
+      localStorage.removeItem("cart"); // تفريغ السلة
+      closePopup('checkout-popup');
+      window.location.href = "thankyou.html"; // التوجيه لصفحة الشكر
+    });
   } else {
     alert("❌ فشل إرسال الطلب");
   }
 })
-.catch(() => {
-  alert("⚠️ حدث خطأ في الاتصال بالخادم");
+.catch((err) => {
+  alert("⚠️ حدث خطأ في الاتصال بالخادم\n" + (err && err.message ? err.message : ''));
 });
 
     cart.length = 0;
