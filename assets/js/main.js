@@ -98,8 +98,8 @@
             <h5 class="card-title">${product.name}</h5>
             <p class="card-text flex-grow-1">${product.shortDesc}</p>
             <p class="card-text text-danger fw-bold">
-              $${product.price}
-              ${Number(product.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">$${product.oldPrice}</span>` : ''}
+              د.أ${product.price}
+              ${Number(product.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">د.أ${product.oldPrice}</span>` : ''}
             </p>
             ${availableText}
             <div class="mt-auto">
@@ -259,8 +259,8 @@
     document.getElementById('popup-title').textContent = currentProduct.name;
     document.getElementById('popup-description').textContent = currentProduct.description;
    document.getElementById('popup-price').innerHTML = `
-  $${currentProduct.price}
-  ${Number(currentProduct.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">(كان $${currentProduct.oldPrice})</span>` : ''}
+  د.أ${currentProduct.price}
+  ${Number(currentProduct.oldPrice) > 0 ? `<span class="ms-2 text-muted text-decoration-line-through">(كان د.أ${currentProduct.oldPrice})</span>` : ''}
 `;
     
     const addBtn = document.getElementById('popup-add-button');
@@ -348,7 +348,7 @@ addBtn.className = currentProduct.available ? "btn btn-primary" : "btn btn-secon
   totalEl.innerHTML = `
     ${discountPercent > 0 ? `<div>المجموع قبل الخصم: <s>${totalBefore.toFixed(2)} د.أ</s></div>
     <div>قيمة الخصم (${discountPercent}%): -${discountAmount.toFixed(2)} د.أ</div>` : ''}
-    <div>رسوم التوصيل: ${deliveryFee.toFixed(2)} د.أ</div>
+    <div>رسوم التوصيل: ${deliveryFee.toFixed(2)} </div>
     <div class="text-success fw-bold">المجموع النهائي: ${totalFinal.toFixed(2)} د.أ</div>
   `;
 }
@@ -409,7 +409,7 @@ function populateDeliveryAreas() {
   for (const area in fees) {
     if (Object.hasOwn(fees, area)) {
       // area is the name from the sheet (e.g., "عمان", "الزرقاء", ...)
-      select.insertAdjacentHTML('beforeend', `<option value="${area}">${area} (${fees[area]} ${CONFIG.CURRENCY})</option>`);
+      select.insertAdjacentHTML('beforeend', `<option value="${area}">${area}</option>`);
     }
   }
 }
@@ -509,8 +509,8 @@ function renderTopSellingProducts(topProducts) {
           <div class="card-body d-flex flex-column p-2">
             <h6 class="card-title small">${product.name}</h6>
             <p class="card-text text-danger fw-bold small">
-              $${product.price}
-              ${Number(product.oldPrice) > 0 ? `<span class="ms-1 text-muted text-decoration-line-through">$${product.oldPrice}</span>` : ''}
+              د.أ${product.price}
+              ${Number(product.oldPrice) > 0 ? `<span class="ms-1 text-muted text-decoration-line-through">د.أ${product.oldPrice}</span>` : ''}
             </p>
             ${availableText}
             <div class="mt-auto">
