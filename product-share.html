@@ -28,7 +28,7 @@
           const title = product.name || "منتج من المتجر";
           const desc = product.shortDesc || "اكتشف هذا المنتج المميز";
           const image = (product.images || "").split(',')[0]?.trim() || "https://via.placeholder.com/600x400?text=Product";
-          const shareUrl = `${location.origin}/whatsapp-e-commerce/product-share.html?id=${id}`;
+          const shareUrl = `${location.origin}/product-share.html?id=${id}`;
 
           document.head.innerHTML += `
             <meta property="og:title" content="${title}">
