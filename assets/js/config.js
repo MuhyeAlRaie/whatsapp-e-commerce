@@ -10,25 +10,21 @@ const CONFIG = {
   ORDERS_API_URL: "https://script.google.com/macros/s/AKfycbw-pT4ThTSIDbAlBfe-r2Q6rIkW9LFYRqWhLqlC8ExvJEb9l0V_WIlR--9F4ze2_ycn/exec",
 
   // رابط Google Apps Script لإدارة الكوبونات من Google Sheet
-  COUPONS_API_URL: "https://script.google.com/macros/s/AKfycbwzGdb3o1wNNDzuV4AP0Pog9wSlBhqPvznqapsnYOaKhBGRt2edyaN0iHA6bB6EzXTU/exec", // ← Replace with your actual coupon API URL
+  COUPONS_API_URL: "https://script.google.com/macros/s/AKfycbwzGdb3o1wNNDzuV4AP0Pog9wSlBhqPvznqapsnYOaKhBGRt2edyaN0iHA6bB6EzXTU/exec", 
 
-  // رابط Google Apps Script لإدارة صور البانر من Google Sheet
-  HERO_SLIDER_API_URL: "https://script.google.com/macros/s/AKfycbx2bOYD5aMCYvgcKmmpfLVdQctrKsttXSYMNCjfUNJj1tyttY0CM7mVCNPnNRMJYUFf/exec", // ← Replace with your actual hero slider API URL
-
+ 
   // رابط Google Apps Script لتحليل المنتجات الأكثر مبيعاً من Google Sheet (using Orders API)
   TOP_SELLING_API_URL: "https://script.google.com/macros/s/AKfycbyDGk9Bd2yynaBQAKmsvQYH9clQTwQQvUpv9J5cP5UZ_zZJ7AjpHmaWkAZDI5TekFzT/exec",
 
-  // رسوم التوصيل حسب المناطق (تعديل حسب الحاجة)
-  DELIVERY_FEES: {
-    area1: 5,
-    area2: 10,
-    area3: 15
-  },
+  DELIVERY_FEE_API_URL: "https://script.google.com/macros/s/AKfycbz4ThX4G_E2TmgWyvd_TPixtBYE_FaMpAV-wUe7Qw9HlBE8O9bZ_GWDjzsGEdDn8HEB0g/exec", 
+
+
+ // DELIVERY_FEES will be loaded dynamically from DELIVERY_FEE_API_URL
+  DELIVERY_FEES: {},
+
 
   // الكوبونات المسموح بها (خصم بنسبة مئوية) - سيتم استبدالها بالبيانات من Google Sheets
   COUPONS: {
-    SAVE10: 10,
-    VIP20: 20,
-    SUPER30: 30
+    
   }
 };

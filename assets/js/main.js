@@ -353,29 +353,79 @@ addBtn.className = currentProduct.available ? "btn btn-primary" : "btn btn-secon
   `;
 }
 
-const deliveryFees = {
-  area1: 2,  // رسوم التوصيل 5 د.أ للمنطقة 1
-  area2: 2.5, // رسوم التوصيل 10 د.أ للمنطقة 2
-  area3: 3  // رسوم التوصيل 15 د.أ للمنطقة 3
-};
+
 let deliveryFee = 0;
 
 function updateDeliveryFee() {
   const areaSelect = document.getElementById('delivery-area');
   const selectedArea = areaSelect.value;
   const feeMessage = document.getElementById('delivery-fee-message');
+  const fees = CONFIG.DELIVERY_FEES || {};
 
-  if (deliveryFees[selectedArea] !== undefined) {
-    deliveryFee = deliveryFees[selectedArea];
+  if (fees[selectedArea] !== undefined) {
+    deliveryFee = Number(fees[selectedArea]);
     feeMessage.textContent = `رسوم التوصيل: ${deliveryFee.toFixed(2)} د.أ`;
   } else {
     deliveryFee = 0;
     feeMessage.textContent = '';
   }
   updateOrderSummary();
-  updateCart();  // لتحديث المجموع في السلة إذا تعرض هناك
+  updateCart();
 }
 
+
+let DELIVERY_FEES = {};
+
+// Fetch delivery fees from Google Apps Script and update CONFIG.DELIVERY_FEES
+function loadDeliveryFees() {
+  fetch(CONFIG.DELIVERY_FEE_API_URL)
+    .then(response => response.json())
+    .then(data => {
+      // data is an array of { area, fee, lastModified }
+      const fees = {};
+      data.forEach(item => {
+        fees[item.area] = item.fee;
+      });
+      CONFIG.DELIVERY_FEES = fees;
+      populateDeliveryAreas(); // Ensure dropdown is updated as soon as fees are loaded
+    })
+    .catch(err => {
+      console.error('Failed to load delivery fees:', err);
+    });
+}
+
+
+
+// Populate delivery areas dynamically from CONFIG.DELIVERY_FEES (area names from Google Sheet)
+function populateDeliveryAreas() {
+  const select = document.getElementById('delivery-area');
+  if (!select) return;
+  // Remove all options
+  select.innerHTML = '';
+  // Add placeholder
+  select.insertAdjacentHTML('beforeend', '<option disabled selected value="">اختر منطقة التوصيل</option>');
+  // Use Google Sheet data: area is the name, fee is the value
+  const fees = CONFIG.DELIVERY_FEES;
+  for (const area in fees) {
+    if (Object.hasOwn(fees, area)) {
+      // area is the name from the sheet (e.g., "عمان", "الزرقاء", ...)
+      select.insertAdjacentHTML('beforeend', `<option value="${area}">${area} (${fees[area]} ${CONFIG.CURRENCY})</option>`);
+    }
+  }
+}
+
+// Wait for delivery fees to be loaded, then populate areas
+function waitForDeliveryFeesAndPopulate() {
+  if (typeof CONFIG !== 'undefined' && CONFIG.DELIVERY_FEES && Object.keys(CONFIG.DELIVERY_FEES).length > 0) {
+    populateDeliveryAreas();
+  } else {
+    setTimeout(waitForDeliveryFeesAndPopulate, 200);
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  loadDeliveryFees();
+  waitForDeliveryFeesAndPopulate();
+});
 
 // Dynamic coupons loaded from Google Sheets
 let coupons = {};
